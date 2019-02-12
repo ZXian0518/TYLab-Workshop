@@ -36,11 +36,12 @@ pre { /* Code block */
 
 - 第一步：下載R－https://cran.rstudio.com/
 - 第二步：下載R Studio：https://www.rstudio.com/products/rstudio/download/
+- 今天會用到的資料檔：https://github.com/ZXian0518/TYLab-Workshop-Class1
 
 
 # 一、R的環境介紹
 
-<img src="/Users/huangzongxian/Desktop/R/TYLab Workshop/Class1/Data/image_preview.png" width="75%"/>
+<img src="/Users/huangzongxian/Desktop/R/TYLab Workshop/Class1/image_preview.png" width="75%"/>
 
 - 如何新增與儲存Script、Markdown、Project
 - 資料檔顯示於`Environment`
@@ -519,4 +520,93 @@ result
 
 # apply函數可以更快的做出結果
 apply(practice[1:4],2,var)
+```
+
+
+# 八、在上多變量之前
+- 我們先示範最基本的資料讀取方式(txt/csv/xls/sav/Rdata)
+- 利用`setwd()`設定工作路徑，並用`dir()`找尋工作路徑內的檔案，可以讓你處理多個資料時不會混亂
+- `getwd()`可以找尋現在的工作路徑
+- Mac快速取得路徑的方法：https://blog.dg-space.com/2015/01/mac-finder-copy-path.html
+- `txt`的讀取可以直接`read.table`即可、`read.csv`也可以用來讀取txt檔喔
+
+```{r setup, include=FALSE}
+setwd("/Users/huangzongxian/Desktop/R/TYLab Workshop/Class1") #更改路徑
+dir()
+getwd()
+rm(list = ls())
+txt_sample1 <- read.table("sample.txt",header = T)
+txt_sample2 <- read.csv("sample.txt",sep = "\t")
+```
+
+- `csv`的讀取則是透過`read.csv`
+
+```{r}
+csv_sample <- read.csv("sample.csv")
+```
+
+- `xls`的讀取則需要透過套件`readxl`
+
+```{r}
+require(readxl)
+xls_sample <- read_excel("sample.xlsx")
+```
+
+- 讀取sav檔時需要安裝`foreign`套件(`haven`套件亦可)
+- `to.data.frame`用來決定要不要存成資料框架(False的話就以list方式呈現)，`use.value.labels`則決定是要出現原數值或是編碼的value
+
+```{r}
+require(foreign)
+sav_sample<- read.spss("TEDS2016_indQ_sample.sav",to.data.frame = T,use.value.labels = F)
+#sav_sample<- read.spss("TEDS2016_indQ_sample.sav",to.data.frame = T,use.value.labels = T)
+```
+
+- `Rdata`則是用`load`來載入，不需要指定object就會依儲存時的名稱直接出現在environment中
+
+```{r}
+load("sample.RData")
+```
+
+- 也可以直接進行不同資料格式的匯出
+- `write.csv`、`write.xls`
+- `foreign`套件也可以匯出很多不同的資料格式，但要是你單純想存成sav格式的話，`haven`當中的`write_sav`更為方便
+- `save`可以用來儲存成`Rdata`檔
+
+```{r}
+require(xlsx)
+write.csv(csv_sample,file = "sample1.csv")
+write.xlsx(xls_sample,file= "sample1.xlsx")
+require(haven)
+write_sav(sav_sample,"sample1.sav")
+save(datlis,file = "sample1.Rdata")
+```
+
+
+# 九、迴圈能幹嘛？為什麼要用R來麻煩自己
+- 迴圈可以幫助你快速處理重複性的工作，並且犯錯的機會很低，要是你邏輯沒寫錯的話！
+- 一個TEG工作的案例:如何將資料檔分割成每份500個觀察值？
+
+```{r}
+rm(list = ls())
+load("sample.RData")
+data<- datlis[[5]]  # 2017年共有7530列資料
+vars <- c("gender","age","edu") # 只要性別、年齡、教育程度
+df <- data[which(names(data) %in% vars)] # 切割次資料集
+
+for(i in 0:15L){
+   a <- i*500+1
+   b <- i*500+500
+ if(b>nrow(df)){
+  b <- nrow(df)
+ }
+assign(paste0("dataset",i),df[a:b,])
+print(paste("dataset",i,"From row",a,"to row",b))
+ }
+
+#Save all data
+rm(data,datlis,df,a,b,i,vars)  # 把一些不要的刪掉
+files <- mget(ls())
+for (i in 1:length(files)){
+  write.csv(files[[i]], paste(names(files[i]),".csv", sep = ""),fileEncoding ="BIG5")
+}
 ```

@@ -223,6 +223,7 @@ pre { /* Code block */
 <ul>
 <li>第一步：下載R－<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a></li>
 <li>第二步：下載R Studio：<a href="https://www.rstudio.com/products/rstudio/download/" class="uri">https://www.rstudio.com/products/rstudio/download/</a></li>
+<li>今天會用到的資料檔：<a href="https://github.com/ZXian0518/TYLab-Workshop-Class1" class="uri">https://github.com/ZXian0518/TYLab-Workshop-Class1</a></li>
 </ul>
 </div>
 <div id="r" class="section level1">
@@ -1118,6 +1119,94 @@ result</code></pre>
 apply(practice[1:4],2,var)</code></pre>
 <pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
 ##    0.6856935    0.1899794    3.1162779    0.5810063</code></pre>
+</div>
+<div class="section level1">
+<h1>八、在上多變量之前</h1>
+<ul>
+<li>我們先示範最基本的資料讀取方式(txt/csv/xls/sav/Rdata)</li>
+<li>利用<code>setwd()</code>設定工作路徑，並用<code>dir()</code>找尋工作路徑內的檔案，可以讓你處理多個資料時不會混亂</li>
+<li><code>getwd()</code>可以找尋現在的工作路徑</li>
+<li>Mac快速取得路徑的方法：<a href="https://blog.dg-space.com/2015/01/mac-finder-copy-path.html" class="uri">https://blog.dg-space.com/2015/01/mac-finder-copy-path.html</a></li>
+<li><p><code>txt</code>的讀取可以直接<code>read.table</code>即可、<code>read.csv</code>也可以用來讀取txt檔喔</p></li>
+<li><p><code>csv</code>的讀取則是透過<code>read.csv</code></p></li>
+</ul>
+<pre class="r"><code>csv_sample &lt;- read.csv(&quot;sample.csv&quot;)</code></pre>
+<ul>
+<li><code>xls</code>的讀取則需要透過套件<code>readxl</code></li>
+</ul>
+<pre class="r"><code>require(readxl)</code></pre>
+<pre><code>## Loading required package: readxl</code></pre>
+<pre class="r"><code>xls_sample &lt;- read_excel(&quot;sample.xlsx&quot;)</code></pre>
+<ul>
+<li>讀取sav檔時需要安裝<code>foreign</code>套件(<code>haven</code>套件亦可)</li>
+<li><code>to.data.frame</code>用來決定要不要存成資料框架(False的話就以list方式呈現)，<code>use.value.labels</code>則決定是要出現原數值或是編碼的value</li>
+</ul>
+<pre class="r"><code>require(foreign)</code></pre>
+<pre><code>## Loading required package: foreign</code></pre>
+<pre class="r"><code>sav_sample&lt;- read.spss(&quot;TEDS2016_indQ_sample.sav&quot;,to.data.frame = T,use.value.labels = F)
+#sav_sample&lt;- read.spss(&quot;TEDS2016_indQ_sample.sav&quot;,to.data.frame = T,use.value.labels = T)</code></pre>
+<ul>
+<li><code>Rdata</code>則是用<code>load</code>來載入，不需要指定object就會依儲存時的名稱直接出現在environment中</li>
+</ul>
+<pre class="r"><code>load(&quot;sample.RData&quot;)</code></pre>
+<ul>
+<li>也可以直接進行不同資料格式的匯出</li>
+<li><code>write.csv</code>、<code>write.xls</code></li>
+<li><code>foreign</code>套件也可以匯出很多不同的資料格式，但要是你單純想存成sav格式的話，<code>haven</code>當中的<code>write_sav</code>更為方便</li>
+<li><code>save</code>可以用來儲存成<code>Rdata</code>檔</li>
+</ul>
+<pre class="r"><code>require(xlsx)</code></pre>
+<pre><code>## Loading required package: xlsx</code></pre>
+<pre class="r"><code>write.csv(csv_sample,file = &quot;sample1.csv&quot;)
+write.xlsx(xls_sample,file= &quot;sample1.xlsx&quot;)
+require(haven)</code></pre>
+<pre><code>## Loading required package: haven</code></pre>
+<pre class="r"><code>write_sav(sav_sample,&quot;sample1.sav&quot;)
+save(datlis,file = &quot;sample1.Rdata&quot;)</code></pre>
+</div>
+<div id="r" class="section level1">
+<h1>九、迴圈能幹嘛？為什麼要用R來麻煩自己</h1>
+<ul>
+<li>迴圈可以幫助你快速處理重複性的工作，並且犯錯的機會很低，要是你邏輯沒寫錯的話！</li>
+<li>一個TEG工作的案例:如何將資料檔分割成每份500個觀察值？</li>
+</ul>
+<pre class="r"><code>rm(list = ls())
+load(&quot;sample.RData&quot;)
+data&lt;- datlis[[5]]  # 2017年共有7530列資料
+vars &lt;- c(&quot;gender&quot;,&quot;age&quot;,&quot;edu&quot;) # 只要性別、年齡、教育程度
+df &lt;- data[which(names(data) %in% vars)] # 切割次資料集
+
+for(i in 0:15L){
+   a &lt;- i*500+1
+   b &lt;- i*500+500
+ if(b&gt;nrow(df)){
+  b &lt;- nrow(df)
+ }
+assign(paste0(&quot;dataset&quot;,i),df[a:b,])
+print(paste(&quot;dataset&quot;,i,&quot;From row&quot;,a,&quot;to row&quot;,b))
+ }</code></pre>
+<pre><code>## [1] &quot;dataset 0 From row 1 to row 500&quot;
+## [1] &quot;dataset 1 From row 501 to row 1000&quot;
+## [1] &quot;dataset 2 From row 1001 to row 1500&quot;
+## [1] &quot;dataset 3 From row 1501 to row 2000&quot;
+## [1] &quot;dataset 4 From row 2001 to row 2500&quot;
+## [1] &quot;dataset 5 From row 2501 to row 3000&quot;
+## [1] &quot;dataset 6 From row 3001 to row 3500&quot;
+## [1] &quot;dataset 7 From row 3501 to row 4000&quot;
+## [1] &quot;dataset 8 From row 4001 to row 4500&quot;
+## [1] &quot;dataset 9 From row 4501 to row 5000&quot;
+## [1] &quot;dataset 10 From row 5001 to row 5500&quot;
+## [1] &quot;dataset 11 From row 5501 to row 6000&quot;
+## [1] &quot;dataset 12 From row 6001 to row 6500&quot;
+## [1] &quot;dataset 13 From row 6501 to row 7000&quot;
+## [1] &quot;dataset 14 From row 7001 to row 7500&quot;
+## [1] &quot;dataset 15 From row 7501 to row 7530&quot;</code></pre>
+<pre class="r"><code>#Save all data
+rm(data,datlis,df,a,b,i,vars)  # 把一些不要的刪掉
+files &lt;- mget(ls())
+for (i in 1:length(files)){
+  write.csv(files[[i]], paste(names(files[i]),&quot;.csv&quot;, sep = &quot;&quot;),fileEncoding =&quot;BIG5&quot;)
+}</code></pre>
 </div>
 
 
