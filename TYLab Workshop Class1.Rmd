@@ -1,0 +1,522 @@
+---
+title: "TYLab Workshop Class1"
+author: "Zong-Xian Huang"
+date: "2018/12/13"
+output: html_document
+---
+<style type="text/css">
+
+body{ /* Normal  */
+   font-size: 20px;
+}
+td {  /* Table  */
+   font-size: 12px;
+}
+h1 { /* Header 1 */
+ font-size: 28px;
+ color: DarkBlue;
+}
+h2 { /* Header 2 */
+ font-size: 22px;
+ color: DarkBlue;
+}
+h3 { /* Header 3 */
+ font-size: 18px;
+ color: DarkBlue;
+}
+code.r{ /* Code block */
+  font-size: 16px;
+}
+pre { /* Code block */
+  font-size: 16px
+}
+</style>
+
+# 零、開始之前
+
+- 第一步：下載R－https://cran.rstudio.com/
+- 第二步：下載R Studio：https://www.rstudio.com/products/rstudio/download/
+
+
+# 一、R的環境介紹
+
+<img src="/Users/huangzongxian/Desktop/R/TYLab Workshop/Class1/Data/image_preview.png" width="75%"/>
+
+- 如何新增與儲存Script、Markdown、Project
+- 資料檔顯示於`Environment`
+- 下載與使用套件顯示於`Package`
+- 代碼的結果與圖表會分別顯示於`Console`與`Plots`
+
+# 二、開始吧：介紹基本運算子與變數指派
+
+- R當中最重要的符號是`<-`與`=`，他們被稱作為指派運算子（建議使用`<-`），用來指派值到某個變數上。最直觀的說法就是，箭頭右邊會去取代箭頭左邊的東西。
+- 執行變數名稱就可以呼叫變數，當你重複指定到同一個變數時，原先的值就會被取代。
+- 使用快捷鍵`ctlr+enter`即可執行該行指令
+- 你可以使用`rm()`移除掉你要刪除的變數，順帶一提，`rm(list=ls())`則可以直接清除右上角environment當中的所有變數與值
+
+```{r}
+x <- 5566
+x
+x <- "不能亡"
+x
+rm(x)
+rm(list = ls())
+```
+- R也可以擔任計算機來使用，基本的運算子有包含下列幾個：
+- `+`、`-`、`*`、`/`：毫無反應，就只是個加減乘除
+- 進階運算子：次方`^2`、餘數`%%`、
+- 邏輯運算子：`>`、`<`、`>=`、`<=`、`==`、`!=`
+
+```{r}
+#加減乘除
+1+1
+1-1
+1*2
+1/2
+
+#進階運算子
+2^10
+5%%2
+
+#邏輯運算子
+5==5
+3>5
+1!=1
+```
+
+- 有些function可以計算比較複雜的運算，例如`sqrt()`、`sum()`、`sd()`、`median()`、`mean()`..
+
+```{r}
+sqrt(2)    # 開根號
+sum(1:10)  # 總和
+sd(1:10)   # 標準差
+median(1:10)  # 中位數
+mean(1:10)  # 平均數
+var(1:10) # 變異數
+round(var(1:10),digits = 3) # 四捨五入到第三位數
+```
+# 三、基本資料屬性
+R所使用的數值屬性大概分為下列幾個大類，我們可以用測量尺度的方式來想像
+
+- `numeric`: 可包含小數的數字，例如 1、2、3.5、55.66等
+- `character`: 文字，例如 你、好、嗎，利用`""`包起來的值全部都會被視作`character`
+- `integer`: 整數，可以用1L、2L的方式來表達
+- `logical`: 邏輯，TRUE & FALSE
+- `complex`: 複數，例如 1+2i...沒事不會用到
+- 使用`class()`可以檢測變數的屬性
+```{r}
+# Try it!
+class(2)
+class("2")
+class(2L)
+class(2==2)
+class(2+2i)
+```
+同場加映:
+
+- `factor`: 分級過後的向量，當需要分組時相當好用。
+```{r}
+x <- c(4,4,3,2,2,1,4,2)
+y <- factor(x)
+factor(x, labels = c("非常不滿意", "不滿意", "滿意", "非常滿意")) # 可自訂 Level 的名稱。
+factor(x, ordered = TRUE)
+sum(x)  # sum(y)
+```
+
+
+# 四、R的資料格式與結構
+在瞭解單個變數的屬性之後，我們開始介紹資料結構。資料結構就像是容器一樣，將我們剛剛前面提到的變數或是數值排列成特定的格式，依照複雜程度由低到高大概可以分為:
+
+- `variable`: 長度為1的向量，包含最基本的值，可以用前面我們學會的`<-`來指定變數。
+
+
+```{r}
+x <- 5566
+length(x)
+```
+- `vector`: 可以想像成一整排variable排排站，是構成資料框架最基本的單位。透過`c()`可以將數個值或是文字串成一個長度較長的向量。
+
+```{r}
+x <- 5566
+y <- "得第一"
+z <- c(x,y)
+z
+length(z)
+```
+
+
+- 利用`cbind()`或`rbind()`可以將vector資料合併成兩維度資料
+
+```{r}
+x <- 1:10
+y <- letters[1:10]
+cbind(x,y)
+rbind(x,y)
+```
+
+- 順便練習幾個創造值的function，例如`seq()`、`rep()`
+- 中括號`[]`可以用來挑選特定位置的元素
+
+```{r}
+seq(1,10)
+seq(1,10,2)
+x <- seq(1,10,2)
+rep(x,3)
+x[5]
+```
+
+- `matrix`: 矩陣，矩陣的資料格式如下
+matrix(data = NA, nrow = 1, ncol = 1, byrow = FALSE, dimnames = NULL)
+- 可用`help()`來查看說明與範例
+
+```{r}
+matrix(data=1:6,nrow=2,byrow=F,dimnames = list(c("row1","row2"),
+                                               c("col.1","col.2","col.3")))
+
+matrix(data=1:6,nrow=2,byrow=T,dimnames = list(c("row1","row2"),
+                                               c("col.1","col.2","col.3")))
+help("matrix")
+```
+- 想要知道矩陣的欄數、列數可使用 `ncol()`、`nrow()`、`dim()`
+- `rownames()`、`colnames()`則可以用來命名
+```{r}
+mat <- matrix(1:6,nrow=2,byrow=T)
+nrow(mat)
+ncol(mat)
+dim(mat)
+rownames(mat) <- c("row1","row2")
+colnames(mat) <- c("col.1","col.2","col.3")
+```
+- `[]`可以用來找位置，記得`[]`內數字的排列是`[row,col]`
+```{r}
+mat
+mat[1,2]
+mat["row1","col.2"]
+mat[1,]  # 第一列所有
+mat[,2]  # 第二欄所有
+```
+- `data.frame`: R最重要的資料結構，功能類似excel或SPSS有欄位名稱。由於data frame的欄與欄之間可以儲存不同的資料屬性，因此在使用上較matrix彈性。
+```{r}
+data.frame(name=c("Rory","文峰","EJ","yen","丞堯","Sam","Anna","Ting","承彥"),age=c(18,25,24,24,24,24,23,23,20),height=c(168,172,165,156,170,168,160,158,168))
+#another way
+name <- c("Rory","文峰","EJ","yen","丞堯","Sam","Anna","Ting","承彥")
+age <- c(18,25,24,24,24,24,23,23,20)
+height <- c(168,172,165,156,170,168,160,158,168)
+data.frame(name=name,age=age,height=height)
+```
+- `summary()`用來呈現資料的描述統計、`str()`則呈現欄位的屬性、`head()`則呈現前六筆資料，在處理大量資料時先弄懂欄位屬性與基本的描述統計是相當重要的
+
+```{r}
+df<- data.frame(name=c("Rory","文峰","EJ","yen","丞堯","Sam","Anna","Ting","承彥"),age=c(18,25,24,24,24,24,23,23,20),height=c(168,172,165,156,170,168,160,158,168))
+summary(df)
+str(df)
+head(df)
+```
+
+- `list`: dataframe的彈性在於容許欄位之間為不同的資料屬性，而list則更可以容許不同的資料結構包含進去同一個list當中。舉例而言，進行網頁爬蟲時，會有網頁描述(vector)、網頁表格(data.frame)等等，此時就會生成一個list將這些不同結構的資料包成一個資料便於處理。
+- 利用`list`就可以將你要的資料包進list當中，`unlist`則可以強迫將list拆解成vector的形式
+```{r}
+vec.1 <- "這是一個列表說明"
+mat.1 <- matrix(1:15,nrow=3,byrow = T)
+df.1 <- data.frame(name=c("Rory","文峰","EJ","yen","Sam","Anna"),age=c(18,25,24,24,24,23),
+           height=c(168,172,165,158,168,160))
+list.1 <- list(vec.1,mat.1,df.1)
+names(list.1)<-c("向量","矩陣","資料框架")
+```
+
+- list當中的資料位置可以用`[[]]`來找到，後面接上`[]`則可以找特定的值
+- 直接呼叫名稱也是可行的方法
+
+```{r}
+list.1[[1]]
+list.1[["向量"]]
+list.1[[2]][3,1]
+list.1[[3]][2,]
+```
+
+- 假如你想要刪除list當中的某一個資料集，指派他為`NULL`即可刪除
+
+```{r}
+list.1[[1]] <- NULL
+list.1[["向量"]]  # 原先位置在第一個的向量被刪除了
+```
+
+
+# 五、資料清理與運用
+介紹完資料屬性與資料結構，想必大家對於R的運用有個初步的瞭解，找出特定的數值並處理呢？
+主要可以有下列三個步驟:
+- 利用`[]`取出位置
+- 利用邏輯值`TURE`或`FALSE`
+- 利用名稱
+
+- 在`vector`當中我們想像變數是排排站的，用順序的概念來想像位子
+```{r}
+x <- c(1,4,5,6,7,8,12)
+x[c(1,3,5)] # 透過位置取
+```
+
+- 透過`TURE`或`FALSE`的話，我們會習慣設定一個條件，讓軟體幫我們生成邏輯值，利用`which()`可以找出`TURE`的位置
+- 當然，直接打`T`or`F`也是可行的
+
+```{r}
+x[c(T,F,T,F,T,F,F)]
+x[which(x%%2!=0)] # 找出奇數
+x[which(x%%2==0)] # 找出偶數
+```
+
+- 瞭解`which`跟`TRUE`之間的關係，對於後續的資料處理有相當大的幫助
+- 試著輸入以下code吧！
+
+```{r}
+which(c(T,F,T,T,F))
+which(c(T,T,T,F,T))
+```
+
+- 利用減號`-`就可以刪除或修改Vector當中的資料，記得修改後要透過`<-`指派回去喔
+
+```{r}
+x <- 1:10
+x[-c(1,3,5,7,9)]
+x
+x <- x[-c(1,3,5,7,9)]
+x
+```
+
+# QUIZ!!
+
+請找出1~100之間，無法被2與3整除的數字，並指派為一個新的向量
+
+```{r}
+x <- 1:100
+y <-  x[which(x%%2!=0 & x%%3 !=0)]
+y
+```
+
+- `as.XXX`則可以轉換vector的資料屬性，但要注意的是有些轉換會讓數值變成`NA`，例如當你將文字轉成數字的時候
+
+```{r}
+x <- c(1,3,5,7)
+class(x)
+x <- as.integer(x)
+class(x)
+x <- as.character(x)
+class(x)
+x <- as.numeric(x)
+class(x)
+y <- c("你","好","嗎")
+y <- as.numeric(y)
+y
+```
+
+
+- `data.frame`的處理我們可以將它想像成2個維度的向量
+- Data.frame的方便之處在於`$`可以取出特定欄位名稱的值
+
+```{r}
+name <- c("Rory","文峰","EJ","yen","Sam","Anna")
+age <- c(18,25,24,24,24,23)
+height <- c(168,172,165,158,168,160)
+df<- data.frame(name=name,age=age,height=height)
+df$name[6]
+df$age[6]
+df$height[6]
+df[6,]
+```
+
+- `which`與`TURE`等的運用也同樣適用於data.frame之中，
+- 安裝套件與`library()`
+- `data(package = .packages(all.available = TRUE))`可以列出所有你可用的dataset
+- 我們利用`airquality`資料集來練習吧! `?資料集名稱`即可看到欄位說明
+```{r}
+#install.packages("datasets")
+library(datasets)
+data(package = .packages(all.available = TRUE))
+?airquality
+dt.1 <-  airquality
+str(dt.1)
+summary(dt.1)
+```
+
+- 首先我們發現資料當中有一些遺漏值`NA`，透過`is.na()`可以用來檢測資料當中的遺漏值。`na.omit()`可以暴力地將所有遺漏值移除，但假如你是想要進行插補的就不建議這種方式
+- 接下來挑出7月份與9月份的資料來看看。`&`代表的是交集(AND)、`|`則代表聯集(OR)
+- 找出7月份與9月份紫外線指數大於平均的日子
+
+```{r}
+is.na(dt.1)
+dt.1<- na.omit(dt.1)
+dt.2<- dt.1[which(dt.1$Month==7 | dt.1$Month==9),]
+dt.2[which(dt.2$Solar.R>mean(dt.2$Solar.R)),]
+```
+
+# 六、流程控制與迴圈
+
+在進行流程控制之前，我們必須先瞭解「判斷式」，判斷式就是讓程式判斷後會吐出TRUE or FALSE，再藉由TRUE or FALSE 的情況進行流程控制 
+
+- 前面學到的邏輯運算子可以運用在這裡
+```{r}
+'得第一'=='巧芯巧芯得第一'
+3>7
+5>3 & 5>4
+5>3 | 5>7
+```
+
+當你今天想要做某些事情，而你需要設定一些條件的時候，就可以通過設條件式與指令的方式來達成。
+
+if(判斷){#do something}
+else if (判斷){#do something}
+else{#do something}
+
+- `if` 、`else`、 `else if` 是程式語言中最常用的條件指令形式
+
+```{r}
+
+age <- 20
+if(age > 18){
+print("你可以喝酒")
+}
+
+age <- 16
+if(age >18){
+print("你可以喝酒")
+}
+
+age <- 16
+if(age>18){
+print("你可以喝酒")
+}else{
+print("你不能喝酒")
+}
+
+age <- round(runif(1, -1000,20))
+
+if(age>18){
+  print("你可以喝酒")
+}else if(age<0){print("年齡不會有負數")}else{
+  print("你不能喝酒")
+}
+```
+
+當你需要同時要求多個數值時(例如同時處理很多列的數值)做相同條件的事情時，你可以透過迴圈(for-loop)指令搭配前面講的流程控制指令來完成。
+
+- 在迴圈中要注意的概念是，每次只會出裡一個投入的值，並且吐出一個指令。也就是想像每一圈都是全新的開始，只是在指令當中某個元素的變動，而導致結果的不同。
+
+```{r}
+for (i in 1:10){
+  print(i)
+}
+all <- c()
+for (i in 1:10){
+  all <- c(all,i*2+1)
+}
+all
+
+# 挑選出1到100中的偶數
+all <- c()
+for(i in 1:100){
+if(i%%2==0){
+all <- c(all,i)
+}
+}
+all
+```
+
+-`while`的應用，while後面接的是一個條件，當這個條件為TRUE的時候才會執行下列指令。
+- `while`與`if`很常寫出殊途同歸的結果
+
+```{r}
+# 計算1~100的積為何
+i <- 1
+result <- 0
+while(i<101){
+result <- result + i 
+i <-  i+1
+}
+```
+
+- `break`與`next`則是用來針對特定情況來終止或跳過迴圈
+- if(條件) break: 發生某種狀況時，終止迴圈
+- if(條件) next: 發生某種條件時，跳過迴圈(也就是不處理該區段的指令)
+
+```{r}
+#break
+for (i in 1:100){
+  if (i > 10) break
+  print(i)
+}
+
+#next
+for (i in 1:100){
+  if (i > 10 && i <50) next
+  print(i)
+}
+
+
+```
+
+
+# 七、綜合練習！！！
+首先大家可以先把內建的data叫出來，是一個關於鳶尾花的資料集`iris`
+- practice <- iris
+首先我們同樣先對於這個資料集作一些檢視，包含`head()`、`str()`、`summary()`
+接著因為他是dataframe，可以點開檢視一下資料集的樣式
+接著以下是今天的綜合練習，會用到今天教的一些技巧。
+請大家花？分鐘完成
+
+- 1. data中的Species這一行是一個factor(有大小之分的文字)，如何將它轉化成character
+- 2. Sepal.Length這行的標準差為何？
+- 3. 取出Sepal.Width這行的四種寫法並將之命名為t1 (hints：位置、名稱、邏輯、$)
+- 4. 利用t1這個vector，替它命名(直接用數列命名就可以)並且利用除了T/F取法外取出第7跟第21個值
+- 5. 寫出一個條件式，假設有一值x，若輸入進去值大於Petal.Length請print出'超過平均'，小於則print出'小於平均'，若是負的請print出'不會有負數'
+- 6. 請利用迴圈算出每一行的變異數並成為一個新的vector（數值四捨五入到小數點第二位）
+
+
+```{r}
+# answer
+# 00
+practice <- iris
+head(practice)
+str(practice)
+summary(practice)
+
+# 01
+practice$Species <- as.character(practice$Species)
+practice[,5] <- as.character(practice[,5])
+practice[,'Species'] <- as.character(practice[,'Species'])
+
+# 02
+sd(practice$Sepal.Length)
+sd(practice[,1])
+sd(practice[,'Sepal.Length'])
+
+# 03
+t1 <- practice[,2]
+t1 <- practice[,'Sepal.Width']
+t1 <- practice$Sepal.Width
+t1 <- practice[,c(F,T,F,F,F)]
+
+# 04
+names(t1) <- 1:length(t1)
+t1[c(7,21)]
+t1[c('7','21')]
+
+# 05
+leng <- 5.5
+if(leng>mean(practice$Petal.Length)){
+  print("超過平均")
+}else if(leng<mean(practice$Petal.Length)&leng>0){
+  print("小於平均")
+}else{
+  print("不會有負數")
+}
+#06
+result <- c()
+for(i in 1:4){
+  var1 <- var(practice[,i])
+  var1 <- round(var1,digits = 2)
+  result <- c(result,var1)
+}
+result
+
+# apply函數可以更快的做出結果
+apply(practice[1:4],2,var)
+```
